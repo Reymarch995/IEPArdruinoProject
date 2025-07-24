@@ -37,7 +37,7 @@ void loop() {
   displayHumidity((int8_t)h);//
   delay(2000);
   disp.clearDisplay();
-  K2(float t, float h);
+  K2(t, h);
   
 }
 /************************************************* *********************/
