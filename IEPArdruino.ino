@@ -24,21 +24,24 @@ void setup() {
     pinMode(LED_GREEN, OUTPUT);
     pinMode(LED_YELLOW, OUTPUT);
     pinMode(LED_BLUE, OUTPUT);
+    pinMode(BUTTONK2, INPUT_PULLUP);
+    pinMode(BUTTONK1, INPUT_PULLUP);
 
-      Serial.begin(9600); 
+    Serial.begin(9600); 
 }
 
-void loop() {
- 
+void loop() { 
+  double xtemp = 36, yhumi = 60;
   float h = dht.readHumidity();
   float t = dht.readTemperature();
-  displayTemperature((int8_t)t);//
-  delay(3000);
-  displayHumidity((int8_t)h);//
-  delay(2000);
-  disp.clearDisplay();
-  K2(t, h);
-  
+  if(digitalRead(BUTTONK1) == 0)
+  {
+    K1(t, h);
+    disp.clearDisplay();
+    ChangeValueTemp(xtemp);
+    ChangeValueHumi(yhumi);
+    disp.clearDisplay();
+  }
 }
 /************************************************* *********************/
 /* Function: Display temperature on 4-digit digital tube */
@@ -53,7 +56,7 @@ void displayTemperature(int8_t temperature)
   temp[0] = temperature / 10;
   temp[1] = temperature % 10;
   temp[2] = 17; // index of 17 for space
-  temp[3] = 12;           //index of 12 for ‘C’ symbol.
+  temp[3] = 12;           //index of 12 for 'C' symbol.
   disp.display(temp);
 }
 
@@ -67,7 +70,7 @@ void displayHumidity(int8_t h)
   hume[0] = h / 10;
   hume[1] = h % 10;
   hume[2] = 17; // index of 17 for space
-  hume[3] = 18;           //index of 18 for ’H’ symbol.
+  hume[3] = 18;           //index of 18 for 'H' symbol.
   disp.display(hume);
 }
 
@@ -90,3 +93,77 @@ void K2(float t, float h) //Done by Yi'en
     while(digitalRead(BUTTONK2) == 0);
   }
 }
+
+void ChangeValueTemp(double xtemp) //Yi'en
+{
+  Serial.print("Press button K1 to change threshold temperature, button K2 to break.");
+  Serial.println(" ");
+  delay(500);
+  while(1)
+  {
+    if(digitalRead(BUTTONK2) == 0)
+    {
+      break;
+    }
+    if(digitalRead(BUTTONK1) == 0)
+    {
+      delay(500);
+      while(1)
+      {
+        Serial.print("Press button K1 to stop changing temperature, use knob to adjust temperature.");
+        xtemp = analogRead(KNOB_PIN)/10.24;
+        Serial.print("Threshold value : ");
+        Serial.println(xtemp,1);
+        delay(200);
+        displayTemperature(xtemp);
+        if(digitalRead(BUTTONK1) == 0)
+        {
+          Serial.print("New threshold temperature is: ");
+          Serial.println(xtemp);
+          return;
+        }
+      }
+    }
+  }
+}
+
+
+void ChangeValueHumi(double yhumi) //Yi'en
+{
+  Serial.print("Press button K2 to change threshold humidity, button K1 to break.");
+  Serial.println(" ");
+  delay(500);
+  while(1)
+  {
+    if(digitalRead(BUTTONK1) == 0)
+    {
+      break;
+    }
+    if(digitalRead(BUTTONK2) == 0)
+    {
+      delay(500);
+      while(1)
+      {
+        Serial.print("Press button K1 to stop changing humidity, use knob to adjust humidity.");
+        yhumi = analogRead(KNOB_PIN)/10.24;
+        Serial.print("Threshold value : ");
+        Serial.println(yhumi,1);
+        delay(200);
+        displayHumidity(yhumi);
+        if(digitalRead(BUTTONK1) == 0)
+        {
+          Serial.print("New threshold humidity is: ");
+          Serial.println(yhumi);
+          return;
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
