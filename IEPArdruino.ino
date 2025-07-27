@@ -1,24 +1,30 @@
 /*
+Names: Rayhan, Yien
+IEP Project Implementation
+
 Functions used:
-Rayhan: Menu function to call different functions
+Rayhan: Menu function to call (1),(5) and (6) via Serial Monitor
 Progress/Updates: working on it
 
-Rayhan: UI to input a time to water plant, displays the time on the segment when it the time comes and then rings a buzzer
-Progress/Updates: done, waiting for menu function
+Rayhan: Debug function to output all IO and sensor values
+Progress/Updates: working on it
 
-Rayhan: Once temperature or humidity is above x deg cel. or  x RH, as detected by temp sensor/humidity sensor, prompt user using yellow LED to enter an input using IR receiver in order to reduce the brightness of the blue LED
+(1) Rayhan: UI to input a time to water plant, displays the time on the segment when it the time comes and then rings a buzzer
+Progress/Updates: done with code comments
+
+(2) Rayhan: Once temperature or humidity is above x deg cel. or  x RH, as detected by temp sensor/humidity sensor, prompt user using yellow LED to enter an input using IR receiver in order to reduce the brightness of the blue LED
 Progress/Updates:
 
-Yien: Once temperature or humidity is above y deg cel., or y RH, display temperature, ring the buzzer and blink red LED continuously until temperature decreases(Tells the user to bring plant to cooler env. in serial monitor and also allows the user to off the red LED and buzzer using remote) (note that x < y)
+(3) Yien: Once temperature or humidity is above y deg cel., or y RH, display temperature, ring the buzzer and blink red LED continuously until temperature decreases(Tells the user to bring plant to cooler env. in serial monitor and also allows the user to off the red LED and buzzer using remote) (note that x < y)
 Progress/Updates:
 
-Rayhan: Can keep function LED_Status which you stated. (Green LED indicates good, blue LED represents the LED thing on our plant prototype, red only happens when temp/RH is above y value)
+(4) Rayhan: Green LED indicates good, blue LED represents the LED thing on our plant prototype, red only happens when temp/RH is above y value)
 Progress/Updates:
 
-Yien: When user clicks on button K1, it allows user to set the threshold for x and y using knob, and the x and y value that is being set will be displayed on the 7 segment and serial monitor.
+(5) Yien: When user clicks on button K1, it allows user to set the threshold for x and y using knob, and the x and y value that is being set will be displayed on the 7 segment and serial monitor.
 Progress/Updates: Completed already
 
-Yien:After pressing button K1, it displays temp. and RH to user when a button is pressed. (This one already have in notes but can still use to farm more marks.)
+(6) Yien:After pressing button K1, it displays temp. and RH to user when a button is pressed. (This one already have in notes but can still use to farm more marks.)
 Progress/Updates: Completed already
 */
 
@@ -55,20 +61,37 @@ void setup() { //Setup by Yien
     Serial.begin(9600);
 }
 
-void loop() { //Loop by Rayhan
-// to remove the below code later for a menu function
+void loop() { // Loop by Rayhan
+	// Background tasks
     double xtemp = 36, yhumi = 60;
     float h = dht.readHumidity();
     float t = dht.readTemperature();
 
-    if (digitalRead(BUTTONK1) == LOW) {
+    if (digitalRead(BUTTONK1) == LOW)
+    {
+        //By Yi’en
         K1(t, h);
         disp.clearDisplay();
         ChangeValueTemp(xtemp);
         ChangeValueHumi(yhumi);
         disp.clearDisplay();
     }
+	
+	// Call Menu Function
 }
+
+//By Rayhan
+void menu(){
+	Serial.print("*** Rayhan and Yien's *** ");
+	Serial.println("*** Arduino IEP Code ***");
+	Serial.println("*** Menu ***");
+	Serial.println("* 1. Plant watering timer *");
+	Serial.println("* 2.  *");
+	Serial.println("* 3.  *");
+	Serial.println("* 4. Debug Mode *");
+	Serial.println("* Enter your choice: ");
+}
+
 //By Rayhan
 void timer() {
     Serial.println(("Enter timer in seconds:"));
@@ -157,7 +180,7 @@ void ChangeValueTemp(double xtemp) {
     }
 }
 //By Yien
-void ChangeValueHumi(double yhumi) { //Yi’en
+void ChangeValueHumi(double yhumi) {
     Serial.println(F("Press button K2 to change threshold humidity, button K1 to break."));
     delay(500);
     while (true) {
@@ -180,6 +203,12 @@ void ChangeValueHumi(double yhumi) { //Yi’en
         }
     }
 }
+
+
+
+
+
+
 
 
 
