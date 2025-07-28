@@ -92,8 +92,7 @@ void menu(){
 	Serial.println("* 1. Plant watering timer *");
 	Serial.println("* 2. Press button K1 to display temperature and humidity, and also to change threshold values. *");
 	Serial.println("* 3. Change Humidity Threshold *");
-	Serial.println("* 4. Debug Mode *");
-	Serial.println("* Enter your choice: ");
+	Serial.println("* 4. Debug Mode *")
 	// determine which function to call
 	switch(choice){
 		case 1: 
