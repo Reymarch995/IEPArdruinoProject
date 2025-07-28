@@ -3,20 +3,20 @@ Names: Rayhan, Yien
 IEP Project Implementation
 
 Functions used:
-Rayhan: Menu function to call (1),(5) and (6) via Serial Monitor
-Progress/Updates: working on it
+Rayhan: Menu function to call (0.5),(1),(5) and (6) via Serial Monitor
+Progress/Updates: done, awaiting run
 
-Rayhan: Debug function to output all IO and sensor values
-Progress/Updates: working on it
+(0.5) Rayhan: Debug function to output all IO and sensor values
+Progress/Updates: work paused until 28/7/'25
 
 (1) Rayhan: UI to input a time to water plant, displays the time on the segment when it the time comes and then rings a buzzer
-Progress/Updates: done with code comments
+Progress/Updates: done with code comments, awaiting run
 
 (2) Rayhan: Once temperature or humidity is above x deg cel. or  x RH, as detected by temp sensor/humidity sensor, prompt user using yellow LED to enter an input using IR receiver in order to reduce the brightness of the blue LED
 Progress/Updates:
 
 (3) Yien: Once temperature or humidity is above y deg cel., or y RH, display temperature, ring the buzzer and blink red LED continuously until temperature decreases(Tells the user to bring plant to cooler env. in serial monitor and also allows the user to off the red LED and buzzer using remote) (note that x < y)
-Progress/Updates:
+Progress/Updates: (I'm doing tomorrow)
 
 (4) Rayhan: Green LED indicates good, blue LED represents the LED thing on our plant prototype, red only happens when temp/RH is above y value)
 Progress/Updates:
@@ -48,8 +48,8 @@ Progress/Updates: Completed already
 TM1637 disp(CLK, DIO);
 DHT dht;
 PassiveBuzzer buz(PassiveBuzzerPin);
-
-void setup() { //Setup by Yien
+//Setup by Yien
+void setup() {
     disp.init();
     dht.begin();
     pinMode(LED_RED, OUTPUT);
@@ -60,16 +60,17 @@ void setup() { //Setup by Yien
     pinMode(BUTTONK1, INPUT_PULLUP);
     Serial.begin(9600);
 }
+//By Rayhan
+void loop() {
+    // Init Variables
 
-void loop() { // Loop by Rayhan
-	// Background tasks
     double xtemp = 36, yhumi = 60;
     float h = dht.readHumidity();
     float t = dht.readTemperature();
-
+    // Background tasks
     if (digitalRead(BUTTONK1) == LOW)
     {
-        //By Yi’en
+        //By Yi'en
         K1(t, h);
         disp.clearDisplay();
         ChangeValueTemp(xtemp);
@@ -77,20 +78,39 @@ void loop() { // Loop by Rayhan
         disp.clearDisplay();
     }
 	
-	// Call Menu Function
+    // Call Menu Function
+
 }
 
 //By Rayhan
 void menu(){
+	int choice = 0;
+	// main output
 	Serial.print("*** Rayhan and Yien's *** ");
 	Serial.println("*** Arduino IEP Code ***");
 	Serial.println("*** Menu ***");
 	Serial.println("* 1. Plant watering timer *");
-	Serial.println("* 2.  *");
-	Serial.println("* 3.  *");
+	Serial.println("* 2. Press button K1 to display temperature and humidity, and also to change threshold values. *");
+	Serial.println("* 3. Change Humidity Threshold *");
 	Serial.println("* 4. Debug Mode *");
 	Serial.println("* Enter your choice: ");
+	// determine which function to call
+	switch(choice){
+		case 1: 
+		    timer();
+			break;
+		case 2:
+			ChangeValueTemp();
+			break;
+		case 3:
+		    ChangeValueHumi();
+			break;
+		case 4: // add debug call here later!!
+			break;
+		Default: // if user dosent enter 1,2,3 or 4 (invalid input)
+	}
 }
+
 
 //By Rayhan
 void timer() {
@@ -139,8 +159,8 @@ void displayHumidity(int8_t h) {
 }
 
 //By Yien
-void K2(float t, float h) {
-    if (digitalRead(BUTTONK2) == LOW) {
+void K1(float t, float h) { //Code to display temp. and humi
+    if (digitalRead(BUTTONK1) == 0) {
         delay(500);
         Serial.println("Button K2 is pressed.");
         Serial.print("The temperature is: ");
@@ -152,26 +172,26 @@ void K2(float t, float h) {
         displayHumidity((int8_t)h);
         delay(1000);
         disp.clearDisplay();
-        while (digitalRead(BUTTONK2) == LOW);
+        while (digitalRead(BUTTONK1) == 0);
     }
 }
 //By Yien
-void ChangeValueTemp(double xtemp) {
-    Serial.println(F("Press button K1 to change threshold temperature, button K2 to break."));
+void ChangeValueTemp(double xtemp) { //Code to change threshold for temp
+    Serial.println("Press button K1 to change threshold temperature, button K2 to break.");
     delay(500);
     while (true) {
-        if (digitalRead(BUTTONK2) == LOW) break;
-        if (digitalRead(BUTTONK1) == LOW) {
+        if (digitalRead(BUTTONK2) == 0) break;
+        if (digitalRead(BUTTONK1) == 0) {
             delay(500);
             while (true) {
-                Serial.println(F("Press button K1 to stop changing temperature, use knob to adjust temperature."));
+                Serial.println("Press button K1 to stop changing temperature, use knob to adjust temperature.");
                 xtemp = analogRead(KNOB_PIN) / 10.24;
-                Serial.print(F("Threshold value : "));
+                Serial.print("Threshold value : ");
                 Serial.println(xtemp, 1);
                 delay(200);
                 displayTemperature((int8_t)xtemp);
-                if (digitalRead(BUTTONK1) == LOW) {
-                    Serial.print(F("New threshold temperature is: "));
+                if (digitalRead(BUTTONK1) == 0) {
+                    Serial.print("New threshold temperature is: ");
                     Serial.println(xtemp);
                     return;
                 }
@@ -180,22 +200,25 @@ void ChangeValueTemp(double xtemp) {
     }
 }
 //By Yien
-void ChangeValueHumi(double yhumi) {
-    Serial.println(F("Press button K2 to change threshold humidity, button K1 to break."));
+void ChangeValueHumi(double yhumi) { //Code to change threshold for humi
+    Serial.println("Press button K2 to change threshold humidity, button K1 to break.");
     delay(500);
     while (true) {
-        if (digitalRead(BUTTONK1) == LOW) break;
-        if (digitalRead(BUTTONK2) == LOW) {
+        if (digitalRead(BUTTONK1) == 0) 
+        {
+            break;
+        }
+        if (digitalRead(BUTTONK2) == 0) {
             delay(500);
             while (true) {
-                Serial.println(F("Press button K1 to stop changing humidity, use knob to adjust humidity."));
+                Serial.println("Press button K1 to stop changing humidity, use knob to adjust humidity.");
                 yhumi = analogRead(KNOB_PIN) / 10.24;
                 Serial.print(F("Threshold value : "));
                 Serial.println(yhumi, 1);
                 delay(200);
-                displayHumidity((int8_t)yhumi);
-                if (digitalRead(BUTTONK1) == LOW) {
-                    Serial.print(F("New threshold humidity is: "));
+                displayHumidity(yhumi);
+                if (digitalRead(BUTTONK1) == 0) {
+                    Serial.print("New threshold humidity is: ");
                     Serial.println(yhumi);
                     return;
                 }
@@ -203,16 +226,6 @@ void ChangeValueHumi(double yhumi) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
