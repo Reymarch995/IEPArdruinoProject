@@ -68,15 +68,7 @@ void loop() {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
     // Background tasks
-    if (digitalRead(BUTTONK1) == LOW)
-    {
-        //By Yi'en
-        K1(t, h);
-        disp.clearDisplay();
-        ChangeValueTemp(xtemp);
-        ChangeValueHumi(yhumi);
-        disp.clearDisplay();
-    }
+    
 	
     // Call Menu Function
 
@@ -88,27 +80,24 @@ void menu(){
 	// main output
 	Serial.print("*** Rayhan and Yien's *** ");
 	Serial.println("*** Arduino IEP Code ***");
-	Serial.println("*** Menu ***");
-	Serial.println("* 1. Plant watering timer *");
-	Serial.println("* 2. Press button K1 to display temperature and humidity, and also to change threshold values. *");
-	Serial.println("* 3. Change Humidity Threshold *");
-	Serial.println("* 4. Debug Mode *");
+	Serial.println("* * * Menu * * *");
+	Serial.println("*  Plant watering timer (BK1)*");
+	Serial.println("*  Display temperature and humidity, and also to change threshold values. (BK2)*");
+	Serial.println("*  Debug Mode (Serial Only, enter "debug" to access)*");
 	Serial.println("* Enter your choice: ");
 	// determine which function to call
-	switch(choice){
-		case 1: 
-		    timer();
-			break;
-		case 2:
-			ChangeValueTemp();
-			break;
-		case 3:
-		    ChangeValueHumi();
-			break;
-		case 4: // add debug call here later!!
-			break;
-		Default: // if user dosent enter 1,2,3 or 4 (invalid input)
-	}
+	if (digitalRead(BUTTONK1) == 0 && analogRead(KNOB_PIN) > 1000){timer()} // conditions to call timer()
+	else if (digitalRead(BUTTONK1) == 0 && analogRead(KNOB_PIN) < 200){
+		//By Yi'en
+        	K1(t, h);
+        	disp.clearDisplay();
+        	ChangeValueTemp(xtemp);
+        	ChangeValueHumi(yhumi);
+        	disp.clearDisplay();
+	} //
+	else if (digitalRead(BUTTONK2) == 0 && analogRead(KNOB_PIN) > 1000){timer()} //
+	else if (digitalRead(BUTTONK2) == 0 && analogRead(KNOB_PIN) < 200){timer()} //
+	
 }
 
 
