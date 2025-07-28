@@ -48,6 +48,11 @@ Progress/Updates: Completed already
 TM1637 disp(CLK, DIO);
 DHT dht;
 PassiveBuzzer buz(PassiveBuzzerPin);
+double xtemp = 36, yhumi = 60;
+float h = 0.0;
+float t = 0.0;
+bool menuShown = false;
+
 //Setup by Yien
 void setup() {
     disp.init();
@@ -60,18 +65,46 @@ void setup() {
     pinMode(BUTTONK1, INPUT_PULLUP);
     Serial.begin(9600);
 }
+
+//function prototypes
+void K1(float t, float h);
+void displayTemperature(int8_t temperature);
+void displayHumidity(int8_t h);
+void timer();
+void ChangeValueTemp(double xtemp);
+void ChangeValueHumi(double yhumi);
+
 //By Rayhan
 void loop() {
-    // Init Variables
+    // Update global sensor readings
+    t = dht.readTemperature();
+    h = dht.readHumidity();
 
-    double xtemp = 36, yhumi = 60;
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
-    // Background tasks
-    
-	
-    // Call Menu Function
+    // Show the menu only once until a task has finished
+    if (!menuShown) {
+        Serial.println("*** Rayhan and Yien's *** Arduino IEP Code ***");
+        Serial.println("* * * Menu * * *");
+        Serial.println("*  Plant watering timer (K2)*");
+        Serial.println("*  Display temperature/humidity & change thresholds (K1)*");
+        Serial.println("*  Debug Mode (type \"debug\" in Serial monitor)*");
+        Serial.println("Press a button to select...");
+        menuShown = true;
+    }
 
+    // Check buttons each time through loop()
+    if (digitalRead(BUTTONK2) == LOW) {
+        timer();
+        menuShown = false;         // re‑show menu after function completes
+    }
+    else if (digitalRead(BUTTONK1) == LOW) {
+        K1(t, h);                  // use updated global t and h
+        ChangeValueTemp(xtemp);
+        ChangeValueHumi(yhumi);
+        menuShown = false;         // re‑show menu after finishing
+    }
+
+    // Optional: add a small delay to debounce the buttons
+    delay(50);
 }
 
 //By Rayhan
@@ -81,53 +114,60 @@ void menu(){
 	Serial.print("*** Rayhan and Yien's *** ");
 	Serial.println("*** Arduino IEP Code ***");
 	Serial.println("* * * Menu * * *");
-	Serial.println("*  Plant watering timer (BK1)*");
-	Serial.println("*  Display temperature and humidity, and also to change threshold values. (BK2)*");
-	Serial.println("*  Debug Mode (Serial Only, enter "debug" to access)*");
+	Serial.println("*  Plant watering timer (BK2)*");
+	Serial.println("*  Display temperature and humidity, and also to change threshold values. (BK1)*");
+	Serial.println("*  Debug Mode (Serial Only, enter debug to access)*");
 	Serial.println("* Enter your choice: ");
 	// determine which function to call
-	if (digitalRead(BUTTONK1) == 0 && analogRead(KNOB_PIN) > 1000){timer()} // conditions to call timer()
-	else if (digitalRead(BUTTONK1) == 0 && analogRead(KNOB_PIN) < 200){
+	if (digitalRead(BUTTONK2) == 0){timer();} // conditions to call timer()
+	else if (digitalRead(BUTTONK1) == 0){
 		//By Yi'en
-        	K1(t, h);
-        	disp.clearDisplay();
-        	ChangeValueTemp(xtemp);
-        	ChangeValueHumi(yhumi);
-        	disp.clearDisplay();
+    K1(t, h);
+    disp.clearDisplay();
+    ChangeValueTemp(xtemp);
+    ChangeValueHumi(yhumi);
+    disp.clearDisplay();
 	} //
-	else if (digitalRead(BUTTONK2) == 0 && analogRead(KNOB_PIN) > 1000){timer()} //
-	else if (digitalRead(BUTTONK2) == 0 && analogRead(KNOB_PIN) < 200){timer()} //
+	
+	
 	
 }
 
 
 //By Rayhan
 void timer() {
-    Serial.println(("Enter timer in seconds:"));
-    while (Serial.available() == 0) { //wait}
-    // Get User input
+    Serial.println("Enter timer in seconds:");
+    // Wait for the user to type something in the Serial Monitor
+    while (Serial.available() == 0) {
+        // just waiting
+    }
+
     long seconds = Serial.parseInt();
-    // Notify user of Countdown 
-    Serial.print(("Starting countdown: "));
+    Serial.print("Starting countdown: ");
     Serial.print(seconds);
-    Serial.println((" s"));
-    // Countdown notification
+    Serial.println(" s");
+
+    // Countdown loop
     while (seconds > 0) {
         Serial.print(seconds);
         Serial.println(F("..."));
         delay(1000);
         seconds--;
     }
-    // Notify user of countdown completion
+
+    // Notify user and buzz until Button K2 is pressed
     Serial.println(F("Time's up! Press Button K2 to stop buzzer."));
     while (digitalRead(BUTTONK2) == HIGH) {
-        buz.playTone(NOTE_M3, 500);
+        // playTone() blocks for the specified duration and then stops on its own
+        buz.playTone(120, 500);
         delay(500);
-        buz.noTone();
+        // Optionally ensure the buzzer is off
+        buz.off();
         delay(500);
     }
     Serial.println(F("Buzzer stopped."));
 }
+
 //By Rayhan
 void displayTemperature(int8_t temperature) {
     int8_t temp[4];
