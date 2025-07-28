@@ -48,6 +48,10 @@ Progress/Updates: Completed already
 TM1637 disp(CLK, DIO);
 DHT dht;
 PassiveBuzzer buz(PassiveBuzzerPin);
+double xtemp = 36, yhumi = 60;
+float h = 0.0;
+float t = 0.0;
+
 //Setup by Yien
 void setup() {
     disp.init();
@@ -59,12 +63,21 @@ void setup() {
     pinMode(BUTTONK2, INPUT_PULLUP);
     pinMode(BUTTONK1, INPUT_PULLUP);
     Serial.begin(9600);
+
+    menu();
 }
+
+//function prototypes
+void K1(float t, float h);
+void displayTemperature(int8_t temperature);
+void displayHumidity(int8_t h);
+void timer();
+void ChangeValueTemp(double xtemp);
+void ChangeValueHumi(double yhumi);
+
 //By Rayhan
 void loop() {
     // Init Variables
-
-    double xtemp = 36, yhumi = 60;
     float h = dht.readHumidity();
     float t = dht.readTemperature();
     // Background tasks
@@ -81,22 +94,22 @@ void menu(){
 	Serial.print("*** Rayhan and Yien's *** ");
 	Serial.println("*** Arduino IEP Code ***");
 	Serial.println("* * * Menu * * *");
-	Serial.println("*  Plant watering timer (BK1)*");
-	Serial.println("*  Display temperature and humidity, and also to change threshold values. (BK2)*");
-	Serial.println("*  Debug Mode (Serial Only, enter "debug" to access)*");
+	Serial.println("*  Plant watering timer (BK2)*");
+	Serial.println("*  Display temperature and humidity, and also to change threshold values. (BK1)*");
+	Serial.println("*  Debug Mode (Serial Only, enter debug to access)*");
 	Serial.println("* Enter your choice: ");
 	// determine which function to call
-	if (digitalRead(BUTTONK1) == 0 && analogRead(KNOB_PIN) > 1000){timer()} // conditions to call timer()
-	else if (digitalRead(BUTTONK1) == 0 && analogRead(KNOB_PIN) < 200){
+	if (digitalRead(BUTTONK2)){timer();} // conditions to call timer()
+	else if (digitalRead(BUTTONK1)){
 		//By Yi'en
-        	K1(t, h);
-        	disp.clearDisplay();
-        	ChangeValueTemp(xtemp);
-        	ChangeValueHumi(yhumi);
-        	disp.clearDisplay();
+    K1(t, h);
+    disp.clearDisplay();
+    ChangeValueTemp(xtemp);
+    ChangeValueHumi(yhumi);
+    disp.clearDisplay();
 	} //
-	else if (digitalRead(BUTTONK2) == 0 && analogRead(KNOB_PIN) > 1000){timer()} //
-	else if (digitalRead(BUTTONK2) == 0 && analogRead(KNOB_PIN) < 200){timer()} //
+	
+	
 	
 }
 
@@ -121,7 +134,7 @@ void timer() {
     // Notify user of countdown completion
     Serial.println(F("Time's up! Press Button K2 to stop buzzer."));
     while (digitalRead(BUTTONK2) == HIGH) {
-        buz.playTone(NOTE_M3, 500);
+        buz.playTone(120, 500);
         delay(500);
         buz.noTone();
         delay(500);
