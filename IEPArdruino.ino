@@ -89,10 +89,10 @@ void menu(){
 	Serial.print("*** Rayhan and Yien's *** ");
 	Serial.println("*** Arduino IEP Code ***");
 	Serial.println("*** Menu ***");
-	Serial.println("* 1. Plant watering timer *");
-	Serial.println("* 2. Press button K1 to display temperature and humidity, and also to change threshold values. *");
-	Serial.println("* 3. Change Humidity Threshold *");
-	Serial.println("* 4. Debug Mode *");
+	Serial.println("* (BK1 + Potentiometer Max) 5s Plant watering timer *");
+	Serial.println("* (BK2 10s) Display temperature and humidity, and also to change threshold values. *");
+	Serial.println("* (BK1 10s) Change Humidity Threshold *");
+	Serial.println("* (BK1 + BK2) 10s Debug Mode *");
 	Serial.println("* Enter your choice: ");
 	// determine which function to call
 	switch(choice){
