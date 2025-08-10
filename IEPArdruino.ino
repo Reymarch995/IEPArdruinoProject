@@ -102,10 +102,6 @@ void setup() {
 void loop() {
     t = dht.readTemperature();
     h = dht.readHumidity();
-
-
-
-
     /* Show menu once */
     if (!menuShown) {
         menu();
@@ -116,19 +112,11 @@ void loop() {
             debug();
             menuShown = false;      // show the main menu again afterwards
         }
-
-
-
-
     /* ---------- existing button handling ---------- */
     if (digitalRead(BUTTONK2) == LOW) {
         timer();
         menuShown = false;
     }
-
-
-
-
     else if (digitalRead(BUTTONK1) == LOW) {
         K1(t, h);
         disp.clearDisplay();       // use updated global t and h
@@ -139,12 +127,6 @@ void loop() {
         t = dht.readTemperature();
         menuShown = false;         // re‑show menu after finishing
     }
-
-
-
-
-
-
 
 
     while (t > xtemp || h > yhumi) {    // alarm loop
