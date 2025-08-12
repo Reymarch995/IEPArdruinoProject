@@ -3,34 +3,23 @@ Names: Rayhan, Yien
 IEP Project Implementation
 Github: https://github.com/Reymarch995/IEPArdruinoProject/blob/main/IEPArdruino.ino
 
-
 Functions used:
 Rayhan: Menu function to call (0.5),(1),(5) and (6) via Serial Monitor
 Progress/Updates: done
 
-
 Rayhan overall progress: done, awaiting run
 (0.5) Rayhan: Debug function to output all IO and sensor values
 Progress/Updates: done with code comments, awaiting code run
-
-
 (1) Rayhan: UI to input a time to water plant, displays the time on the segment when it the time comes and then rings a buzzer
 Progress/Updates: done with code comments, success!
-
-
 (3) Rayhan: Green LED indicates good, blue LED represents the LED thing on our plant prototype, red only happens when temp/RH is above y value)
 Progress/Updates: done with code comments, awaiting code run
-
 
 Yi'en overall progress:
 (2) Yien: Once temperature or humidity is above y deg cel., or y RH, display temperature, ring the buzzer and blink red LED continuously until temperature decreases(Tells the user to bring plant to cooler env. in serial monitor and also allows the user to off the red LED and buzzer using remote) (note that x < y)
 Progress/Updates: Done
-
-
 (4) Yien: When user clicks on button K1, it allows user to set the threshold for x and y using knob, and the x and y value that is being set will be displayed on the 7 segment and serial monitor.
 Progress/Updates: Completed already
-
-
 (5) Yien:After pressing button K1, it displays temp. and RH to user when a button is pressed. (This one already have in notes but can still use to farm more marks.)
 Progress/Updates: Completed already
 */
@@ -39,13 +28,11 @@ R 28/7/2025 ~ Yup ive done all left for IEP, do do a code run pls tq! :))
 Y 28/7/25 - I also finish already, I help you run tomorrow
 */
 
-
 // Inits and definitions by Rayhan
 #include <Wire.h>
 #include "RichShieldDHT.h"
 #include "RichShieldTM1637.h"
 #include "RichShieldPassiveBuzzer.h"
-
 
 #define CLK 10
 #define DIO 11
@@ -58,13 +45,6 @@ Y 28/7/25 - I also finish already, I help you run tomorrow
 #define KNOB_PIN A0
 #define PassiveBuzzerPin 3
 
-
-
-
-
-
-
-
 TM1637 disp(CLK, DIO);
 DHT dht;
 PassiveBuzzer buz(PassiveBuzzerPin);
@@ -73,17 +53,7 @@ float h = 0.0;
 float t = 0.0;
 bool menuShown = false;
 
-
-
-
 void debug(void);
-
-
-
-
-
-
-
 
 //Setup by Yien
 void setup() {
@@ -127,8 +97,6 @@ void loop() {
         t = dht.readTemperature();
         menuShown = false;         // re‑show menu after finishing
     }
-
-
     while (t > xtemp || h > yhumi) {    // alarm loop
         buzzercondition();
         if (digitalRead(BUTTONK1) == LOW) {
@@ -141,17 +109,6 @@ void loop() {
     }
     delay(2000);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 //By Rayhan
 void menu(){
@@ -176,9 +133,6 @@ void menu(){
         }
     }
 
-
-
-
   // determine which function to call
   if (digitalRead(BUTTONK2) == 0){timer();} // conditions to call timer()
   else if (digitalRead(BUTTONK1) == 0){ // conditions to call Yien's set of functions
@@ -192,13 +146,6 @@ void menu(){
   }
  
 }
-
-
-
-
-
-
-
 
 void debug() {
     // output humidity, temperature, potentiometer, button, LED values
@@ -237,13 +184,6 @@ void debug() {
     }
 }
 
-
-
-
-
-
-
-
 //By Rayhan
 void timer() {
     Serial.println(F("Enter timer in seconds:"));
@@ -251,26 +191,10 @@ void timer() {
     while (Serial.available() == 0) {
         // just waiting
     }
-
-
-
-
-
-
-
-
     long seconds = Serial.parseInt();
     Serial.print("Starting countdown: ");
     Serial.print(seconds);
     Serial.println(F(" s"));
-
-
-
-
-
-
-
-
     // Countdown loop
     while (seconds > 0) {
         Serial.print(seconds);
@@ -278,14 +202,6 @@ void timer() {
         delay(1000);
         seconds--;
     }
-
-
-
-
-
-
-
-
     // Notify user and buzz until Button K2 is pressed
     Serial.println(F("Time's up! Press Button K2 to stop buzzer."));
     while (digitalRead(BUTTONK2) == HIGH) {
@@ -298,13 +214,6 @@ void timer() {
     }
     Serial.println(F("Buzzer stopped."));
 }
-
-
-
-
-
-
-
 
 //By Rayhan
 void displayTemperature(int8_t temperature) {
@@ -325,24 +234,10 @@ void displayHumidity(int8_t h) {
     disp.display(hume);
 }
 
-
-
-
-
-
-
-
 void plantStatus(){ // Green if healthy (within Range) Red if unhealthy, outside of range, Blue LED is always ON
   if((xtemp < 30 && xtemp > 25) && (yhumi < 70 && yhumi > 45)){digitalWrite(LED_GREEN,HIGH);} //indicate Plant is healthy and within optimal range!
  
 }
-
-
-
-
-
-
-
 
 //By Yien
 void K1(float t, float h) //Yi'en
@@ -369,13 +264,6 @@ void K1(float t, float h) //Yi'en
   disp.clearDisplay();
   return;
 }
-
-
-
-
-
-
-
 
 //By Yien
 float ChangeValueTemp(float xtemp) //Yi'en
@@ -411,21 +299,6 @@ float ChangeValueTemp(float xtemp) //Yi'en
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //By Yien
 float ChangeValueHumi(float yhumi) //Yi'en
 {
@@ -460,21 +333,6 @@ float ChangeValueHumi(float yhumi) //Yi'en
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void PlayBuzzer() //By Yi'en
 {
   const int sirenMelody[] = {
@@ -497,13 +355,6 @@ void PlayBuzzer() //By Yi'en
   delay(300);
 }
 
-
-
-
-
-
-
-
 void buzzercondition() //By Yi'en
 {
   float h, t;
@@ -525,90 +376,4 @@ void buzzercondition() //By Yi'en
   return;
 }
 
-
-
-
-
-
-
-
 // Made with <3 by Rayhan & Yien
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
