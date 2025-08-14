@@ -29,11 +29,12 @@ Y 28/7/25 - I also finish already, I help you run tomorrow
 */
 
 // Inits and definitions by Rayhan
+// Libraries
 #include <Wire.h>
 #include "RichShieldDHT.h"
 #include "RichShieldTM1637.h"
 #include "RichShieldPassiveBuzzer.h"
-
+// Definitions
 #define CLK 10
 #define DIO 11
 #define LED_RED 4
@@ -44,7 +45,7 @@ Y 28/7/25 - I also finish already, I help you run tomorrow
 #define BUTTONK1 8
 #define KNOB_PIN A0
 #define PassiveBuzzerPin 3
-
+// More definitions
 TM1637 disp(CLK, DIO);
 DHT dht;
 PassiveBuzzer buz(PassiveBuzzerPin);
@@ -52,7 +53,7 @@ double xtemp = 36, yhumi = 60;
 float h = 0.0;
 float t = 0.0;
 bool menuShown = false;
-
+// Function declaration
 void debug(void);
 
 //Setup by Yien
@@ -86,7 +87,7 @@ void loop() {
     if (digitalRead(BUTTONK2) == LOW) {
         timer();
         menuShown = false;
-    }
+    }// Yien
     else if (digitalRead(BUTTONK1) == LOW) {
         K1(t, h);
         disp.clearDisplay();       // use updated global t and h
@@ -122,10 +123,10 @@ void menu(){
   Serial.println(F("*  Debug Mode (Serial Only, enter 'debug' to access)*"));
   Serial.println(F("* Enter your choice: "));
  
-    // FIX: Check for debug command first
+    //Check for debug command first
     if (Serial.available() > 0) {
         String input = Serial.readString();
-        input.trim();
+        input.trim(); //optimize string
         input.toLowerCase();
         if (input == "debug") {
             debug();
@@ -135,7 +136,7 @@ void menu(){
 
   // determine which function to call
   if (digitalRead(BUTTONK2) == 0){timer();} // conditions to call timer()
-  else if (digitalRead(BUTTONK1) == 0){ // conditions to call Yien's set of functions
+  else if (digitalRead(BUTTONK1) == 0){
     //By Yi'en
     K1(t, h);
     disp.clearDisplay();
@@ -153,12 +154,12 @@ void debug() {
     Serial.println(F("Entered debug mode!"));
     delay(1000);
     Serial.println(F("Enter 'exit' to exit debug mode..."));
-    delay(1000);
+    delay(1000); // give user time to know how to exit
    
-    while (true) { // FIX: Proper loop structure
+    while (true) {
         if (Serial.available() > 0) {
             String input = Serial.readString();
-            input.trim();
+            input.trim(); //optimize string
             input.toLowerCase();
             if (input == "exit") {
                 Serial.println(F("Exiting debug mode..."));
@@ -173,10 +174,10 @@ void debug() {
         Serial.println(h);
         Serial.print(F("Potentiometer value: ")); //output raw potentiometer values
         Serial.println(analogRead(KNOB_PIN));
-        if (digitalRead(BUTTONK1) == 0) {
+        if (digitalRead(BUTTONK1) == 0) {// check if BK1 is pressed
             Serial.println(F("BK1 pressed!"));
         }
-        if (digitalRead(BUTTONK2) == 0) {
+        if (digitalRead(BUTTONK2) == 0) {// check if BK2 is pressed
             Serial.println(F("BK2 pressed!"));
         }
         Serial.println(F("*************"));
@@ -189,7 +190,7 @@ void timer() {
     Serial.println(F("Enter timer in seconds:"));
     // Wait for the user to type something in the Serial Monitor
     while (Serial.available() == 0) {
-        // just waiting
+        // just waiting for Serial input to be available
     }
     long seconds = Serial.parseInt();
     Serial.print("Starting countdown: ");
